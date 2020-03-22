@@ -57,7 +57,7 @@ namespace RunCpp{
         FILE *fp=NULL;
         string file_name=to_string(file_id)+".cpp";
         char address[1005];
-        
+        memset(address,0,sizeof(address));
         strcat(address, src_address.c_str());
         strcat(address, file_name.c_str());
         
@@ -122,7 +122,7 @@ namespace RunC{
         FILE *fp=NULL;
         string file_name=to_string(file_id)+".c";
         char address[1005];
-        
+        memset(address,0,sizeof(address));
         strcat(address, src_address.c_str());
         strcat(address, file_name.c_str());
         
