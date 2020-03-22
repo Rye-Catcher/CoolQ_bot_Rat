@@ -8,7 +8,7 @@
 
 
 
-## 功能
+### 功能
 
 - \#文章生成 something: 生成一篇主题为 something 的文章链接 (基于[BullshitGenerator](https://github.com/menzi11/BullshitGenerator) )
 
@@ -30,7 +30,7 @@
 
 
 
-## demo
+### demo
 
 ![run_c](https://ykxahq.ch.files.1drv.com/y4mhfxlJClumRa6g1wZzDrayQ7mk1WHGTLUX6K1-wTY9AU4eGxp3lcWtFUixYA2fvwvK5yf4eOeaEZoByBmEq9P0IyhiLT10JaEk4UvCvjwb14pY-uARJ1zKba94lsjR6GiUfYUK-98jh1kbI5tdEP38RXBEuC6iRtqx_OeiRf573e2zWvoVpPgpglNbLDWowt30oD4XkfcC90LfWdJ8aHbNw?width=742&height=372&cropmode=none)
 
@@ -42,7 +42,7 @@
 
 
 
-## 如何运行?
+### 如何运行?
 
 
 
@@ -70,7 +70,7 @@
 
 
 
-## To-do list & some bugs
+### To-do list & some bugs
 
 - [ ] c/cpp 代码中出现" [ "或" ] "字符（导致无法使用数组）就会编译错误的问题 （其实是文本编码的问题）
 
