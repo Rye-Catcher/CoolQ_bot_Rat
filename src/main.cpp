@@ -12,7 +12,9 @@
 
 
 /*写得比较乱见谅*/
-/*第一个头文件必须放在最前 https://github.com/cqmoe/cqcppsdk/issues/1*/
+
+/*第一个头文件<cqcppsdk/cqcppsdk.h>必须放在最上面 https://github.com/cqmoe/cqcppsdk/issues/1*/
+/*自己写的头文件中，最好把变量及函数放在 class 或 namespace 里，不然容易编译错误（玄学）*/
 
 using namespace cq;
 using namespace std;
@@ -63,9 +65,8 @@ CQ_INIT {
                 output_text+="\"#体温\": to declare your temperature\n";
                 output_text+="\"#电竞 游戏名\"：获得相关游戏的赛事咨询\n";
                 output_text+="\"#新冠病毒\"：获得新冠病毒相关资讯\n";
-                output_text+="\"#dealine\"：获取接下来的deadline\n";
-                output_text+="Based on CoolQ and its C++ SDK. Bot coded by RyeCatcher\n";
-                output_text+="已知Bug: 运行代码请不要使用数组\n";
+                output_text+="\"#deadline\"：获取接下来的deadline\n";
+                output_text+="\nGithub: https://github.com/Rye-Catcher/CoolQ_bot_Rat\n";
 				send_message(event.target, output_text);	
 			}
 		} catch (ApiError &){}
