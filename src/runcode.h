@@ -15,11 +15,15 @@ https://stackoverflow.com/questions/38876218/execute-a-command-and-get-output-po
 
 int file_id=5;
 
-/*--------------------------------------------------------------*/
-/*请编辑你要保存运行代码的路径 (路径名称中请使用\\)*/
-/*PLease edit the path to save the code (remember to use \\)*/
-string src_address="G:\\Github Repositories\\CoolQ_C++\\src\\";
 
+string src_address="";
+
+
+namespace Get_Src_Address{
+    void get_src_address(string src_path){
+            src_address=src_path;
+    }
+};
 
 namespace DelExisting{
     void del_existing_exe(){
@@ -28,7 +32,7 @@ namespace DelExisting{
         system(command.c_str());
         return ;
     }
-}
+};
 
 namespace UnicodeToANSI{
 
@@ -53,7 +57,10 @@ namespace RunCpp{
     
     
 
-    string run_code(string text_input){
+    string run_code(string src_path, string text_input){
+
+        Get_Src_Address::get_src_address(src_path);
+
         FILE *fp=NULL;
         string file_name=to_string(file_id)+".cpp";
         char address[1005];
@@ -105,10 +112,10 @@ namespace RunCpp{
     }
 
 
-    string _main(string text_input){
+    string _main(string src_path, string text_input){
         
         //int file_id=save_code(text_input);
-        return run_code( text_input );
+        return run_code( src_path, text_input );
 
     }
 };
@@ -118,7 +125,10 @@ namespace RunC{
     
    
 
-    string run_code(string text_input){
+    string run_code(string src_path, string text_input){
+
+        Get_Src_Address::get_src_address(src_path);    
+
         FILE *fp=NULL;
         string file_name=to_string(file_id)+".c";
         char address[1005];
@@ -171,10 +181,10 @@ namespace RunC{
     }
 
 
-    string _main(string text_input){
+    string _main(string src_path, string text_input){
         
         //int file_id=save_code(text_input);
-        return run_code( text_input );
+        return run_code( src_path, text_input );
 
     }
 };

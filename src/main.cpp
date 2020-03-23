@@ -5,6 +5,7 @@
 #include <ctime>
 #include <sstream>
 #include "acg_sentences.h"
+#include "hitokoto.h"
 #include "greeting.h"
 #include "runcode.h"
 #include "deadline.h"
@@ -21,6 +22,16 @@ using namespace std;
 using Message = cq::message::Message;
 using MessageSegment = cq::message::MessageSegment;
 
+
+/*--------------------------------------------------------------*/
+/*请设置你要保存运行代码(实现 #runcode )的绝对路径 (路径名称中请使用\\)*/
+/*PLease set the path to save the code (remember to use \\)*/
+const string code_src_path="G:\\Github Repositories\\CoolQ_C++\\src\\";
+
+/*请设置成 main.cpp 所在的绝对路径 (路径名称中请使用\\)*/
+/*PLease set the path of this "main.cpp" (remember to use \\)*/
+const string src_path="G:\\Github Repositories\\CoolQ_C++\\bot Rat\\src\\";
+
 CQ_INIT {
     on_enable([] { logging::info("启用", "插件已启用"); });
 
@@ -34,13 +45,13 @@ CQ_INIT {
             if(text_id == "#runcode_cpp"){
  
                 string text_code = usr_text.substr(text_id.length()+1);
-                string output_text = RunCpp::_main(text_code);
+                string output_text = RunCpp::_main(code_src_path, text_code);
                 
                 send_message(event.target, output_text);  //发送信息 (string类型)
             }
             else if(text_id == "#runcode_c"){
                 string text_code = usr_text.substr(text_id.length()+1);
-                string output_text = RunC::_main(text_code);
+                string output_text = RunC::_main(code_src_path, text_code);
                 
                 send_message(event.target, output_text);    
             }
@@ -50,6 +61,30 @@ CQ_INIT {
         }
     });
 	
+    on_private_message([](const PrivateMessageEvent &event) { 
+        try {
+                if(event.message == "#一言" || event.message == "#hitokoto"){
+                    char buf[1000];
+                    string output;
+                    FILE *fp=NULL;
+
+                    GetHitokoto::httpget(src_path);
+                    string command = src_path + "hitokoto.txt";
+                    fp = fopen(command.c_str(), "r");
+                    //fp = fopen("G:\\Github Repositories\\CoolQ_C++\\bot Rat\\src\\hitokoto.txt", "r");
+				    fgets(buf, 1000, fp);
+                    fclose(fp);
+
+				    string output_text(buf);
+                
+				    send_message(event.target, output_text);	
+                }
+                
+        } catch (ApiError &err) {
+            logging::warning("私聊", "私聊消息回复失败, 错误码: " + to_string(err.code));
+        }
+    });
+
 	on_group_message([](const GroupMessageEvent &event) {
 		static const set<int64_t> ENABLED_GROUPS = {579911169, 870704381};
 		if (ENABLED_GROUPS.count(event.group_id) == 0) return; 
@@ -60,12 +95,13 @@ CQ_INIT {
                 output_text+="\"#文章生成 something\"：生成一篇以\"something\"为主题的文章\n";
                 output_text+="\"#runcode_c\"：运行C语言代码并输出结果（支持私聊）\n";
                 output_text+="\"#runcode_cpp\"：运行C++语言代码并输出结果（支持私聊）\n";
+                output_text+="\"#一言\": 获取一句来自 https://hitokoto.cn/ 的话（支持私聊）\n";
                 output_text+="\"#二次元\"：增加你的二次元浓度\n";
                 output_text+="\"#问好\"：收获一句温馨的问候\n";
                 output_text+="\"#体温\": to declare your temperature\n";
                 output_text+="\"#电竞 游戏名\"：获得相关游戏的赛事咨询\n";
                 output_text+="\"#新冠病毒\"：获得新冠病毒相关资讯\n";
-                output_text+="\"#deadline\"：获取接下来的deadline\n";
+                output_text+="\"#deadline\"：获取接下来的 deadline\n";
                 output_text+="\nGithub: https://github.com/Rye-Catcher/CoolQ_bot_Rat\n";
 				send_message(event.target, output_text);	
 			}
@@ -87,13 +123,13 @@ CQ_INIT {
             if(text_id == "#runcode_cpp"){
  
                 string text_code = usr_text.substr(text_id.length()+1);
-                string output_text = RunCpp::_main(text_code);
+                string output_text = RunCpp::_main(code_src_path, text_code);
                 
                 send_message(event.target, output_text);    
             }
             else if(text_id == "#runcode_c"){
                 string text_code = usr_text.substr(text_id.length()+1);
-                string output_text = RunC::_main(text_code);
+                string output_text = RunC::_main(code_src_path, text_code);
                 
                 send_message(event.target, output_text);    
             }
@@ -138,6 +174,35 @@ CQ_INIT {
 		try{
 			if(event.message == "#Deadline"||event.message == "#deadline"){
 				send_message(event.target, Deadline::deadline);	
+			}
+		} catch (ApiError &){}
+		
+		event.block();
+	});
+
+    on_group_message([](const GroupMessageEvent &event) {
+		static const set<int64_t> ENABLED_GROUPS = {579911169,870704381};
+		if (ENABLED_GROUPS.count(event.group_id) == 0) return; 
+		
+		try{
+
+			if(event.message == "#一言" ||event.message== "#hitokoto" ){
+                
+                char buf[1000];
+                string output;
+                FILE *fp=NULL;
+
+                GetHitokoto::httpget(src_path);
+                
+                string command = src_path + "hitokoto.txt";
+                fp = fopen(command.c_str(), "r");
+                //fp = fopen("G:\\Github Repositories\\CoolQ_C++\\bot Rat\\src\\hitokoto.txt", "r");
+				fgets(buf, 1000, fp);
+                fclose(fp);
+
+				string output_text(buf);
+                
+				send_message(event.target, output_text);	
 			}
 		} catch (ApiError &){}
 		
