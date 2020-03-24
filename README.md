@@ -20,6 +20,8 @@
 
 - \#一言: 获取一句来自 https://hitokoto.cn/ 的话（支持私聊）
 
+- \#音乐 名字：获取音乐的播放与下载链接,音乐名建议小写，部分特殊字符暂不支持，可加入作者或是专辑等相关信息增加辨识度, 感谢 [api 来源](https://zhuanlan.zhihu.com/p/30246788)（支持私聊）
+
 - \#问好：收获一句来自祖安的温馨问候
 
 - \#体温:  NUS体温申报网站 (dead people no need for admission -- Prof Tay)
