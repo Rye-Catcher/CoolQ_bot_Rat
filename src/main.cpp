@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <ctime>
 #include <sstream>
+#include "getmusic.h"
 #include "acg_sentences.h"
 #include "hitokoto.h"
 #include "greeting.h"
@@ -85,6 +86,49 @@ CQ_INIT {
         }
     });
 
+    on_private_message([](const PrivateMessageEvent &event) { 
+        try {
+                auto usr_text=event.message;
+                char _text_id[1000];
+
+                sscanf(usr_text.c_str(), "%s", _text_id);
+                string text_id(_text_id);
+
+                if(text_id == "#音乐" ||text_id == "#music" ){
+
+                    char buf[1000];
+                    string output;
+                    FILE *fp=NULL;
+
+                    string text_topic = usr_text.substr(text_id.length()+1);
+
+                    if(text_topic.empty()) send_message(event.target, "请在后面输入名字哦");
+
+                    else{
+
+                        GetMusic::getmusic(src_path, text_topic);
+                
+                        string command = src_path + "getmusic.txt";
+                        fp = fopen(command.c_str(), "r");
+                        //fp = fopen("G:\\Github Repositories\\CoolQ_C++\\bot Rat\\src\\hitokoto.txt", "r");
+                        memset(buf,0,sizeof(buf));
+				        fgets(buf, 1000, fp);
+                        fclose(fp);
+
+				        string output_text(buf);
+                    
+                        if(output_text.empty()) send_message(event.target, "似乎出了点小问题...");
+
+                        else send_message(event.target, output_text);	
+                    }
+				
+                }
+                
+        } catch (ApiError &err) {
+            logging::warning("私聊", "私聊消息回复失败, 错误码: " + to_string(err.code));
+        }
+    });
+
 	on_group_message([](const GroupMessageEvent &event) {
 		static const set<int64_t> ENABLED_GROUPS = {579911169, 870704381};
 		if (ENABLED_GROUPS.count(event.group_id) == 0) return; 
@@ -96,6 +140,7 @@ CQ_INIT {
                 output_text+="\"#runcode_c\"：运行C语言代码并输出结果（支持私聊）\n";
                 output_text+="\"#runcode_cpp\"：运行C++语言代码并输出结果（支持私聊）\n";
                 output_text+="\"#一言\": 获取一句来自 https://hitokoto.cn/ 的话（支持私聊）\n";
+                output_text+="\"#音乐 名字\"：获取音乐的播放与下载链接,音乐名建议小写，部分特殊字符暂不支持，可加入作者或是专辑等相关信息增加辨识度（支持私聊）\n";
                 output_text+="\"#二次元\"：增加你的二次元浓度\n";
                 output_text+="\"#问好\"：收获一句温馨的问候\n";
                 output_text+="\"#体温\": to declare your temperature\n";
@@ -145,7 +190,7 @@ CQ_INIT {
 		
 		try{
             auto usr_text=event.message;
-            char _text_id[1000], _text_topic[1000], _output_url[1005];
+            char _text_id[1000], _text_topic[1000];
 
             sscanf(usr_text.c_str(), "%s %s", _text_id, _text_topic);
             string text_id(_text_id);
@@ -154,12 +199,76 @@ CQ_INIT {
             {
                 srand(time(0));
                 string text_topic(_text_topic);
-                auto art_url="https://suulnnka.github.io/BullshitGenerator/index.html?主题="+text_topic+"&随机种子="+to_string(rand()*rand()*rand()%19260817+1);
-                
-                //CN2Utf8( art_url.c_str(), _output_url);
-                //string output_url(_output_url);
 
-                send_message(event.target, art_url);
+                if(text_topic.empty()) send_message(event.target, "请在后面输入主题哦");
+                else {
+
+                    auto art_url="https://suulnnka.github.io/BullshitGenerator/index.html?主题="+text_topic+"&随机种子="+to_string(rand()*rand()%19260817+1);
+                
+                    //CN2Utf8( art_url.c_str(), _output_url);
+                    //string output_url(_output_url);
+                    send_message(event.target, art_url);
+
+                }
+            }
+
+            else  if(text_id == "#音乐" ||text_id == "#music" ){
+
+                char buf[1000];
+                string output;
+                FILE *fp=NULL;
+
+                string text_topic = usr_text.substr(text_id.length()+1);
+
+                if(text_topic.empty()) send_message(event.target, "请在后面输入名字哦");
+
+                else{
+
+                    GetMusic::getmusic(src_path, text_topic);
+                
+                    string command = src_path + "getmusic.txt";
+                    fp = fopen(command.c_str(), "r");
+                    //fp = fopen("G:\\Github Repositories\\CoolQ_C++\\bot Rat\\src\\hitokoto.txt", "r");
+                    memset(buf,0,sizeof(buf));
+				    fgets(buf, 1000, fp);
+                    fclose(fp);
+
+				    string output_text(buf);
+                    
+                    if(output_text.empty()) send_message(event.target, "似乎出了点小问题...");
+
+                    else send_message(event.target, output_text);	
+                }
+				
+            }
+
+            else if(text_id=="#电竞"){
+                    
+                string text_topic(_text_topic);
+                string output_text;
+
+                if(text_topic.empty()) output_text="请输入游戏名哦";
+
+                else if(text_topic=="CSGO"||text_topic=="CS:GO"){
+                    output_text="https://www.hltv.org/";
+                }
+                else if(text_topic=="王者荣耀"||text_topic=="王者"){
+                    output_text="https://pvp.qq.com/match/kpl/index.shtml";
+                }
+                else if(text_topic=="彩虹六号"||text_topic=="彩虹6号"||text_topic=="彩六"){
+                    output_text="https://pro.eslgaming.com/r6/proleague/";
+                }
+                else if(text_topic=="LOL" || text_topic=="lol" || text_topic=="英雄联盟"){
+                    output_text="https://lpl.qq.com/";
+                }
+                else if(text_topic=="吃鸡" || text_topic=="绝地求生" || text_topic=="PUBG"){
+                    output_text="https://cn.pubgesports.com/";
+                }
+                else {
+                    output_text="Oops...暂时没有收录这个游戏";
+                }
+
+                send_message(event.target, output_text);
             }
        
 		} catch (ApiError &){}
@@ -204,6 +313,8 @@ CQ_INIT {
                 
 				send_message(event.target, output_text);	
 			}
+
+
 		} catch (ApiError &){}
 		
 		event.block();
@@ -251,45 +362,7 @@ CQ_INIT {
 		event.block();
 	});
 
-    on_group_message([](const GroupMessageEvent &event) {
-		static const set<int64_t> ENABLED_GROUPS = {579911169,870704381};
-		if (ENABLED_GROUPS.count(event.group_id) == 0) return; 
-		
-		try{
-			auto usr_text=event.message;
-            char _text_id[1000], _text_topic[1000];
-            sscanf(usr_text.c_str(), "%s %s", _text_id, _text_topic);
-            string text_id(_text_id);
-
-            if(text_id=="#电竞"){
-                string text_topic(_text_topic);
-                string output_text;
-                if(text_topic=="CSGO"||text_topic=="CS:GO"){
-                    output_text="https://www.hltv.org/";
-                }
-                else if(text_topic=="王者荣耀"||text_topic=="王者"){
-                    output_text="https://pvp.qq.com/match/kpl/index.shtml";
-                }
-                else if(text_topic=="彩虹六号"||text_topic=="彩虹6号"||text_topic=="彩六"){
-                    output_text="https://pro.eslgaming.com/r6/proleague/";
-                }
-                else if(text_topic=="LOL" || text_topic=="lol" || text_topic=="英雄联盟"){
-                    output_text="https://lpl.qq.com/";
-                }
-                else if(text_topic=="吃鸡" || text_topic=="绝地求生" || text_topic=="PUBG"){
-                    output_text="https://cn.pubgesports.com/";
-                }
-                else {
-                    output_text="Oops...暂时没有收录这个游戏";
-                }
-                send_message(event.target, output_text);
-            }
-
-		} catch (ApiError &){}
-		
-		event.block();
-	});
-
+    
     on_group_message([](const GroupMessageEvent &event) {
 		static const set<int64_t> ENABLED_GROUPS = {579911169,870704381};
 		if (ENABLED_GROUPS.count(event.group_id) == 0) return; 
@@ -318,29 +391,6 @@ CQ_INIT {
 		event.block();
 	});
 
-    /*待实现*/
-    /*on_group_message([](const GroupMessageEvent &event) {
-		static const set<int64_t> ENABLED_GROUPS = {870704381};
-		if (ENABLED_GROUPS.count(event.group_id) == 0) return; 
-		
-		try{
-			if(event.message == "#一言"){
-				
-                //HttpRequest httpReq("221.235.244.173", 8888);
-                //const auto text = http_get_string("https://v1.hitokoto.cn/?encode=text");
-                //const auto yiyan_text = httpReq.HttpGet("?encode=text");
-                string yiyan;
-                string url1 = "https://v1.hitokoto.cn/?encode=text";
-	            HttpClient::SendReq(url2, [](std::string rsp) { 
-		            std::cout << "http rsp2: " << rsp << std::endl; 
-	            });
-                send_message(event.target, yiyan);
-			}
-		} catch (ApiError &){}
-		
-		event.block();
-	});
-    */
 
 	on_group_message([](const GroupMessageEvent &event) {
 		static const set<int64_t> ENABLED_GROUPS = {579911169, 870704381};
